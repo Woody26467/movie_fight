@@ -6,9 +6,7 @@ const autoCompleteConfig = {
     ${movie.Title} (${movie.Year})
 `
   },
-  onOptionSelect(movie) {
-    onMovieSelect(movie)
-  },
+
   inputValue(movie) {
     return movie.Title
   },
@@ -31,15 +29,23 @@ const autoCompleteConfig = {
 createAutoComplete({
   ...autoCompleteConfig,
   root: document.querySelector('#left-autocomplete'),
+  onOptionSelect(movie) {
+    document.querySelector('.tutorial').classList.add('is-hidden')
+    onMovieSelect(movie, document.querySelector('#left-summary'))
+  },
 })
 
 createAutoComplete({
   ...autoCompleteConfig,
   root: document.querySelector('#right-autocomplete'),
+  onOptionSelect(movie) {
+    document.querySelector('.tutorial').classList.add('is-hidden')
+    onMovieSelect(movie, document.querySelector('#right-summary'))
+  },
 })
 
 // helper function to display the individual movie properties
-const onMovieSelect = async (movie) => {
+const onMovieSelect = async (movie, summaryElement) => {
   const response = await axios.get('https://www.omdbapi.com/', {
     params: {
       apikey: 'e3d716f6',
@@ -47,9 +53,7 @@ const onMovieSelect = async (movie) => {
     },
   })
 
-  document.querySelector('#summary').innerHTML = movieTemplate(
-    response.data
-  )
+  summaryElement.innerHTML = movieTemplate(response.data)
 }
 
 // helper function to add HTML for the movie template

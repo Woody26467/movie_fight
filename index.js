@@ -54,6 +54,11 @@ const onInput = async (event) => {
       <img src="${imgSrc}" alt="" />
       ${movie.Title}
   `
+    option.addEventListener('click', () => {
+      dropdown.classList.remove('is-active')
+      input.value = movie.Title
+    })
+
     resultsWrapper.appendChild(option)
   }
 }
@@ -68,5 +73,12 @@ input.addEventListener('input', debounce(onInput, 500))
 document.addEventListener('click', (event) => {
   if (!root.contains(event.target)) {
     dropdown.classList.remove('is-active')
+  }
+})
+
+// click event listener to show the dropdown if you click back in the search bar
+input.addEventListener('click', () => {
+  if (input.value) {
+    dropdown.classList.add('is-active')
   }
 })

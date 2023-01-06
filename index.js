@@ -77,15 +77,63 @@ const onMovieSelect = async (movie, summaryElement, side) => {
   }
 }
 
+const checkData = () => {}
+
 const runComparison = () => {
-  console.log('Time for comparison')
+  const leftSideStats = document.querySelectorAll(
+    '#left-summary .notification'
+  )
+  const rightSideStats = document.querySelectorAll(
+    '#right-summary .notification'
+  )
+
+  leftSideStats.forEach((leftStat, index) => {
+    const rightStat = rightSideStats[index]
+
+    const leftSideValue = parseFloat(leftStat.dataset.value)
+    const rightSideValue = parseFloat(rightStat.dataset.value)
+
+    if (isNaN(rightSideValue) || isNaN(leftSideValue)) {
+      rightStat.classList.remove('is-primary')
+      rightStat.classList.remove('is-warning')
+      leftStat.classList.remove('is-primary')
+      leftStat.classList.remove('is-warning')
+    } else if (rightSideValue > leftSideValue) {
+      rightStat.classList.remove('is-warning')
+      rightStat.classList.add('is-primary')
+      leftStat.classList.remove('is-primary')
+      leftStat.classList.add('is-warning')
+    } else if (leftSideValue > rightSideValue) {
+      rightStat.classList.remove('is-primary')
+      rightStat.classList.add('is-warning')
+      leftStat.classList.remove('is-warning')
+      leftStat.classList.add('is-primary')
+    } else if (rightSideValue === leftSideValue) {
+      rightStat.classList.remove('is-primary')
+      rightStat.classList.remove('is-warning')
+      leftStat.classList.remove('is-primary')
+      leftStat.classList.remove('is-warning')
+    }
+  })
 }
 
 // helper function to add HTML for the movie template
 const movieTemplate = (movieDetail) => {
-  const dollars = parseInt(
-    movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, '')
-  )
+  // const dollars = parseInt(
+  //   movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, '')
+  // )
+
+  if (!movieDetail.BoxOffice) {
+    movieDetail.BoxOffice = 'N/A'
+  }
+
+  const dollars =
+    movieDetail.BoxOffice === 'N/A'
+      ? 'N/A'
+      : parseInt(
+          movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, '')
+        )
+
   const metascore = parseInt(movieDetail.Metascore)
   const imdbRating = parseFloat(movieDetail.imdbRating)
   const imdbVotes = parseInt(movieDetail.imdbVotes.replace(/,/g, ''))
@@ -102,7 +150,6 @@ const movieTemplate = (movieDetail) => {
     },
     0
   )
-  console.log(awards)
 
   return `
     <article class="media">
@@ -119,23 +166,23 @@ const movieTemplate = (movieDetail) => {
         </div>
       </div>
     </article>
-    <article class="notification is-primary">
+    <article data-value=${awards} class="notification is-primary">
       <p class="title">${movieDetail.Awards}</p>
       <p class="subtitle">Awards</p>
     </article>
-    <article class="notification is-primary">
+    <article data-value=${dollars} class="notification is-primary">
       <p class="title">${movieDetail.BoxOffice}</p>
       <p class="subtitle">Box Office</p>
     </article>
-    <article class="notification is-primary">
+    <article data-value=${metascore} class="notification is-primary">
       <p class="title">${movieDetail.Metascore}</p>
       <p class="subtitle">Metascore</p>
     </article>
-    <article class="notification is-primary">
+    <article data-value=${imdbRating} class="notification is-primary">
       <p class="title">${movieDetail.imdbRating}</p>
       <p class="subtitle">IMDB Rating</p>
     </article>
-    <article class="notification is-primary">
+    <article data-value=${imdbVotes} class="notification is-primary">
       <p class="title">${movieDetail.imdbVotes}</p>
       <p class="subtitle">IMDB Votes</p>
     </article>
